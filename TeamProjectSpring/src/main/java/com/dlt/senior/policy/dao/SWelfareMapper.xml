@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlt.senior.policy.dao.SWelfareRepository">
+
+	<select id = "getWelfare" parameterType="com.dlt.senior.policy.model.PolicyVO" resultType="com.dlt.senior.policy.model.PolicyVO">
+		SELECT region_id, SEQ, ORGNAME, ADDRSEQ, ADDRESS, TELNO, JACHIGU, ETCINFO
+        FROM WELFARE
+        WHERE region_id = #{regionId}
+        ORDER BY DATASEQ, ADDRSEQ
+	</select>
+	
+	    <select id="getSocial" resultType="com.dlt.senior.policy.model.PolicyVO">
+        SELECT SEQ, CATEGORY, DTLCATEGORY, BIZCON, SUPPORTCON 
+        FROM JOB_SOCIAL
+    </select>
+
+    <select id="getMarket" resultType="com.dlt.senior.policy.model.PolicyVO">
+        SELECT SEQ, DTLCATEGORY, JOBCON, SUPPORTCON 
+        FROM SEOULJOB_MARKET
+    </select>
+
+    <select id="getPublic" resultType="com.dlt.senior.policy.model.PolicyVO">
+        SELECT CATEGORY, DTLBIZCON, JOBSAM, SUPPORTCON 
+        FROM JOB_PUBLIC 
+        WHERE region_id = #{regionId}
+    </select>
+
+</mapper>

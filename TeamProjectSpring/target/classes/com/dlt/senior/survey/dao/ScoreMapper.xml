@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlt.senior.survey.dao.IScoreRepository">
+
+	<select id = "getMaxSeq" resultType="int">
+		SELECT NVL(MAX(SEQ)+1, 1) AS SEQ FROM SURVEY
+	</select>
+	
+	<insert id="insertSurvey" parameterType="com.dlt.senior.survey.model.SurveyVO">
+		INSERT INTO SURVEY (
+		SEQ, gender, age, region, health1, health2, health3, 
+		economy1, economy2, economy3, social1, social2, social3)
+		VALUES(
+		#{SEQ, jdbcType=NUMERIC}, 
+		#{gender, jdbcType=VARCHAR}, 
+		#{age, jdbcType=VARCHAR}, 
+		#{region, jdbcType=VARCHAR}, 
+		#{health1, jdbcType=VARCHAR}, 
+		#{health2, jdbcType=VARCHAR}, 
+		#{health3, jdbcType=VARCHAR}, 
+		#{economy1, jdbcType=VARCHAR}, 
+		#{economy2, jdbcType=VARCHAR}, 
+		#{economy3, jdbcType=VARCHAR}, 
+		#{social1, jdbcType=VARCHAR}, 
+		#{social2, jdbcType=VARCHAR}, 
+		#{social3, jdbcType=VARCHAR})
+	</insert>
+</mapper>

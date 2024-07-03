@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlt.senior.survey.dao.IGraphRepository">
+
+	<select id="getResults" resultType="com.dlt.senior.survey.model.GraphVO">
+		SELECT HEALTH, ECO, REL
+		FROM SATI_RESULT
+		WHERE GENDER= #{gender} AND AGE= #{age}
+	</select>
+</mapper>

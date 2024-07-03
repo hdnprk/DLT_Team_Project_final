@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.dlt.senior.disease.dao.IDiseaseRepository">
+	<resultMap id = "diseaseMapping" type = "com.dlt.senior.disease.model.DiseaseVO">
+		<result property = "districtId" column = "district_id"/>
+		<result property = "districtName" column = "district_name" />
+		<result property = "regionId" column = "region_id"/>
+		<result property = "regionName" column = "region_name" />
+		<result property = "dataId" column = "data_id" />
+		<result property = "dementiaData" column = "dementia_data"/>
+		<result property = "diabetesData" column = "diabetes_data"/>
+		<result property = "hyperlipidemiaData" column = "hyperlipidemia_data"/>
+		<result property = "hypertensionData" column = "hypertension_data"/>
+		<result property = "year" column = "year" />
+	</resultMap>
+	
+	<select id = "getDistrictList" parameterType = "int" resultType = "com.dlt.senior.disease.model.DiseaseVO">
+		SELECT region.region_id AS regionId, region.region_name AS regionName, district.district_id AS districtId, district.district_name AS districtName FROM region INNER JOIN district ON region.region_id = district.region_id WHERE region.region_id = #{area}    
+	</select>
+	
+	<select id = "getDiseaseData" parameterType = "int" resultType = "com.dlt.senior.disease.model.DiseaseVO">
+		SELECT data_id AS dataId, dementia_data AS dementiaData, diabetes_data AS diabetesData, hyperlipidemia_data AS hyperlipidemiaData, hypertension_data AS hypertensionData, district_id AS districtId, year FROM disease where district_id = #{district}
+	</select>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+<!-- JDBC 정보를 가져온다 -->
+<!-- <context:property-placeholder location = "classpath:database/jdbc.properties"/> -->
+
+	<!-- 게시판 -->
+	<context:component-scan base-package="com.dlt.senior.board.service" />
+	<context:component-scan base-package="com.dlt.senior.board.dao" />
+	<context:component-scan base-package="com.dlt.senior.board.model" />
+	
+	<mybatis-spring:scan base-package = "com.dlt.senior.board.dao" />
+	
+	<!-- 유저 관리 -->
+	<context:component-scan base-package="com.dlt.senior.usermgmt.dao" />
+	<context:component-scan base-package="com.dlt.senior.usermgmt.service" />
+	<context:component-scan base-package="com.dlt.senior.usermgmt.model" />
+	
+	<mybatis-spring:scan base-package = "com.dlt.senior.usermgmt.dao" />
+	
+	<!-- 질병 서비스 -->
+	<context:component-scan base-package="com.dlt.senior.disease.service" />
+	<context:component-scan base-package="com.dlt.senior.disease.dao" />
+	<context:component-scan base-package="com.dlt.senior.disease.model" />
+
+	<mybatis-spring:scan base-package = "com.dlt.senior.disease.dao" />
+	
+	<!-- 기대 수명 서비스 -->
+	<context:component-scan base-package="com.dlt.senior.life.service" />
+	<context:component-scan base-package="com.dlt.senior.life.dao" />
+	<context:component-scan base-package="com.dlt.senior.life.model" />
+	
+	<mybatis-spring:scan base-package = "com.dlt.senior.life.dao" />
+	
+	<!-- 만족도 조사 서비스 -->
+	<context:component-scan base-package="com.dlt.senior.survey.service"/>
+	<context:component-scan base-package="com.dlt.senior.survey.dao" />
+	<context:component-scan base-package="com.dlt.senior.survey.model" />
+	
+	<mybatis-spring:scan base-package="com.dlt.senior.survey.dao"/>
+	
+	<!-- 정책 제공 서비스 -->
+	<context:component-scan base-package="com.dlt.senior.policy.service" />
+	<context:component-scan base-package="com.dlt.senior.policy.dao" />
+	<context:component-scan base-package="com.dlt.senior.policy.model" />
+	
+	<mybatis-spring:scan base-package = "com.dlt.senior.policy.dao" />
+
+
+	<bean id = "dataSource" class = "org.apache.commons.dbcp.BasicDataSource">
+		<property name = "driverClassName" value = "${jdbc.driverClassName}"/>
+		<property name = "url" value = "${jdbc.url}"/>
+		<property name = "username" value = "${jdbc.username}"/>
+		<property name = "password" value = "${jdbc.password}"/>
+	</bean>
+	
+	<!-- JDBC 사용 안할시 프로젝트 완료 후 빼기 -->
+	<bean id = "jdbcTemplate" class = "org.springframework.jdbc.core.JdbcTemplate">
+		<property name = "dataSource" ref = "dataSource"></property>
+	</bean>
+	
+		
+		<!-- Encryption  -->
+		<!-- JDBC 정보를 가져온다 -->
+	<bean id = "propertyConfigurer" class = "org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref = "configurationEncryptor"/>
+			<property name = "locations">
+				<list>
+					<value>classpath:/database/jdbc.properties</value>
+				</list>
+			</property>
+	</bean>
+	
+
+	<bean id = "environmentVariablesConfiguration" class = "org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name = "algorithm" value = "PBEWithMD5AndDES"/>
+		<property name = "passwordEnvName" value = "APP_ENCRYPTION_PASSWORD" />
+	</bean>
+	
+	<bean id = "configurationEncryptor" class = "org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name = "config" ref = "environmentVariablesConfiguration"/>
+		<property name = "password" value = "helloWorld"/>
+	</bean>
+	
+	<bean id = "sqlSessionFactory" class = "org.mybatis.spring.SqlSessionFactoryBean">
+		<property name = "dataSource" ref = "dataSource" />
+		<property name = "mapperLocations" value = "classpath:com/dlt/senior/**/*.xml"/>
+	</bean>
+	
+
+</beans>

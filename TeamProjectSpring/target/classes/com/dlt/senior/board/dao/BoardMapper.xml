@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.dlt.senior.board.dao.IBoardRepository">
+	<resultMap id = "boardMapping" type = "com.dlt.senior.board.model.BoardVO">
+		<result property = "boardId" column = "b_id"/>
+		<result property = "userName" column = "b_name" />
+		<result property = "boardTitle" column = "b_title"/>
+		<result property = "boardContent" column = "b_content" />
+		<result property = "boardDate" column = "b_date" />
+		<result property = "boardViews" column = "b_views" />
+		<result property = "maxList" column = "maxList"/>
+	</resultMap>
+	
+	<resultMap id = "commentMapping" type = "com.dlt.senior.board.model.CommentVO">
+		<result property = "cId" column = "c_id" />
+		<result property = "bId" column = "b_id" />
+		<result property = "userId" column = "ab_id" />
+		<result property = "cName" column = "c_name" />
+		<result property = "cDate" column = "c_date" />
+		<result property = "bComment" column = "comment_text" />
+		<result property = "cStep" column = "c_step" />
+		<result property = "bGroup" column = "group_number" />
+	</resultMap>
+	
+	<select id = "getBoardList" parameterType = "int" resultType = "com.dlt.senior.board.model.BoardVO">
+		SELECT b_id AS boardId, b_title AS boardTitle, 
+		b_content AS boardContent, b_date AS boardDate, b_views AS boardViews, 
+		b_name AS userName 
+		FROM (SELECT b_id, b_title, b_content, b_Date, b_views, ROW_NUMBER() 
+		OVER (ORDER BY b_date DESC) AS rnum, b_name FROM board) 
+		WHERE rnum BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id = "totalRows" parameterType = "int" resultType = "double">
+		SELECT COUNT(*) FROM board
+	</select>
+	
+	<select id = "getBoardView" parameterType = "int" resultType = "com.dlt.senior.board.model.BoardVO">
+		SELECT b_id AS boardId, b_title AS boardTitle, ab_id AS userId, b_name AS userName,b_content AS boardContent, b_date AS boardDate,b_views AS boardViews FROM board WHERE b_id = #{boardId}
+	</select>
+	
+	<update id = "updateViewership" parameterType = "int">
+		UPDATE board SET b_views = b_views + 1 WHERE b_id = #{boardId}
+	</update>
+
+	<insert id = "insertBoard" parameterType = "com.dlt.senior.board.model.BoardVO">
+		INSERT INTO board (b_id, ab_id, b_name, b_title, b_content, b_date) VALUES (board_id.NEXTVAL, #{userId}, #{userName}, #{boardTitle}, #{boardContent}, SYSDATE)
+	</insert>
+	
+	<select id = "getEditBoard" parameterType = "int" resultType = "com.dlt.senior.board.model.BoardVO">
+		SELECT b_id AS boardId, b_title AS boardTitle, b_content AS boardContent FROM board WHERE b_id = #{boardId}
+	</select>
+	
+	<update id = "editBoard" parameterType = "com.dlt.senior.board.model.BoardVO">
+		UPDATE board SET b_title = #{boardTitle}, b_content = #{boardContent},b_date = SYSDATE WHERE b_id = #{boardId}
+	</update>
+	
+	<delete id = "deleteBoard" parameterType = "int">
+		DELETE FROM board WHERE b_id = #{boardId}
+	</delete>
+	
+	<select id = "getCommentList" parameterType = "int" resultType = "com.dlt.senior.board.model.CommentVO">
+		SELECT c_id AS cId, b_id AS bId, ab_id AS userId, c_name AS cName, c_date AS cDate , comment_text AS bComment, group_number AS bGroup, c_step AS cStep FROM comments WHERE b_id = #{boardId} ORDER BY group_number ASC, c_id ASC
+	</select>
+	
+	<insert id = "insertComment" parameterType = "com.dlt.senior.board.model.CommentVO">
+		INSERT INTO comments (c_id, b_id, ab_id, c_name, comment_text, group_number) VALUES (COMMENT_SEQ.NEXTVAL, #{bId}, #{userId}, #{cName}, #{bComment}, GROUP_SEQ.NEXTVAL)
+	</insert>
+	
+	<insert id = "insertReply" parameterType = "com.dlt.senior.board.model.CommentVO">
+		INSERT INTO comments (c_id, b_id, ab_id, c_name, comment_text, c_step, group_number) VALUES (COMMENT_SEQ.NEXTVAL, #{bId}, #{userId}, #{cName}, #{bComment}, #{cStep}, #{bGroup})
+	</insert>
+	
+	<delete id = "deleteComment" parameterType = "int">
+		DELETE FROM comments
+		<where>
+			<choose>
+				<when test = "cStep == 0">
+					group_number = #{bGroup}	
+				</when>
+				<otherwise>
+					c_id = #{cId}
+				</otherwise>
+			</choose>
+		</where>
+	</delete>
+
+	
+</mapper>
